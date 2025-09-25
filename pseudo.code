@@ -1,0 +1,83 @@
+### Pseudo Code for Frame Processing
+
+```
+// Main Function: Process Video
+Function ProcessVideo(video_path, output_dir, target_fps):
+    Input:
+        - video_path: Path to the input video file
+        - output_dir: Directory to save the output images
+        - target_fps: Frames to process per second
+    Output:
+        - Cropped image files in the output directory
+
+    // Initialize environment
+    Ensure output_dir exists
+    Load face detection model (e.g., 'haarcascade_frontalface_default.xml')
+
+    // Open video file
+    video_capture = Open video file at video_path
+
+    // Get video properties
+    original_fps = Get original frames per second from video_capture
+    frame_interval = Calculate interval to achieve target_fps
+
+    frame_count = 0
+    saved_image_count = 0
+
+    // Loop through video frames
+    While video_capture has more frames:
+        // Read one frame
+        frame = Read next frame from video_capture
+
+        // Skip frames based on the interval
+        If frame_count is a multiple of frame_interval:
+
+            // Convert to grayscale for face detection
+            gray_frame = Convert frame to grayscale
+
+            // Detect faces
+            faces = Detect faces in gray_frame using the face detection model
+
+            // --- Logic for Cropping ---
+            If faces is not empty (a face was detected):
+                For each face found:
+                    // Calculate center coordinates of the face
+                    center_x = face_x + face_width / 2
+                    center_y = face_y + face_height / 2
+
+                    // Calculate crop box coordinates (224x224 centered on the face)
+                    crop_box = Calculate coordinates for a 224x224 box centered at (center_x, center_y)
+
+                    // Crop and resize the image
+                    cropped_image = Crop and resize frame using crop_box to 224x224
+
+                    // Save the image
+                    Save cropped_image to output_dir with a unique filename
+                    Increment saved_image_count
+
+            Else (no face was detected):
+                // Perform a random crop
+                If frame is larger than 224x224:
+                    // Generate random top-left coordinates for a 224x224 crop
+                    random_x = Random number from 0 to (frame_width - 224)
+                    random_y = Random number from 0 to (frame_height - 224)
+
+                    // Crop the image randomly
+                    random_cropped_image = Crop frame using random_x and random_y to 224x224
+
+                    // Save the image
+                    Save random_cropped_image to output_dir with a unique filename
+                    Increment saved_image_count
+
+                Else (frame is too small):
+                    Print a message indicating the frame is too small
+
+        Increment frame_count
+
+    // Clean up
+    Release video_capture object
+    Close all windows
+    Print total number of saved images
+
+End Function
+```
