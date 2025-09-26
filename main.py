@@ -36,6 +36,9 @@ def process_video_to_npy(video_path, output_dir, output_filename, target_fps=3):
     if frame_interval < 1:
         frame_interval = 1
 
+    # Calculate max frames as fps * 10 (for 10 seconds of video)
+    max_frames = target_fps * 10
+
     frame_count = 0
     saved_images = []
     crop_size = 224
@@ -46,6 +49,10 @@ def process_video_to_npy(video_path, output_dir, output_filename, target_fps=3):
             break
 
         if frame_count % frame_interval == 0:
+            # Stop if we've already collected the maximum number of frames
+            if len(saved_images) >= max_frames:
+                break
+
             h_frame, w_frame, _ = frame.shape
 
             # Skip if frame is too small for a 224x224 crop
@@ -100,12 +107,16 @@ def process_video_to_npy(video_path, output_dir, output_filename, target_fps=3):
     # Convert the list of images to a NumPy array
     final_array = np.array(saved_images)
 
-    # Check if the array has 30 frames
-    if final_array.shape[0] < 30:
+    # Check if the array has the expected number of frames
+    if final_array.shape[0] < max_frames:
         print(
-            f"Warning: Only {final_array.shape[0]} frames were processed. Not enough to fill a (30, 224, 224, 3) array."
+            f"Warning: Only {final_array.shape[0]} frames were processed. Expected {max_frames} frames."
         )
-        # You may want to pad the array with zeros or handle this differently
+    elif final_array.shape[0] > max_frames:
+        print(
+            f"Warning: {final_array.shape[0]} frames were processed. Truncating to {max_frames} frames."
+        )
+        final_array = final_array[:max_frames]
 
     # Save the NumPy array to disk
     output_path = os.path.join(output_dir, output_filename)
