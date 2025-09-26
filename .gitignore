@@ -13,3 +13,7 @@ wheels/
 # Video files
 videos/*
 video_data/*
+
+
+# .DS_Store
+.DS_Store

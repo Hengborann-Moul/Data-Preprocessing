@@ -1,3 +1,4 @@
+import argparse
 import os
 import random
 
@@ -116,9 +117,35 @@ def process_video_to_npy(video_path, output_dir, output_filename, target_fps=3):
 
 
 if __name__ == "__main__":
-    # --- Usage ---
-    video_file = ".\\videos\\1100081044.avi"
-    output_directory = "video_data"
-    output_file = "video_frames.npy"
+    parser = argparse.ArgumentParser(
+        description="Process video into frame tensor (.npy)"
+    )
+    parser.add_argument(
+        "--fps",
+        type=int,
+        default=3,
+        help="Target frames per second to extract (default: 3)",
+    )
+    parser.add_argument(
+        "--video",
+        type=str,
+        default="videos/1100081044.avi",
+        help="Path to input video file (default: videos/1100081044.avi)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="video_data",
+        help="Output directory for .npy file (default: video_data)",
+    )
+    parser.add_argument(
+        "--output-file",
+        type=str,
+        default="video_frames.npy",
+        help="Output filename for .npy file (default: video_frames.npy)",
+    )
+    args = parser.parse_args()
 
-    process_video_to_npy(video_file, output_directory, output_file, target_fps=3)
+    process_video_to_npy(
+        args.video, args.output_dir, args.output_file, target_fps=args.fps
+    )
