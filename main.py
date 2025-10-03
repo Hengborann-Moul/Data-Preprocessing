@@ -112,6 +112,14 @@ def process_video_to_npy(video_path, output_dir, output_filename, target_fps=3):
         print(
             f"Warning: Only {final_array.shape[0]} frames were processed. Expected {max_frames} frames."
         )
+        # Duplicate the last frame until we reach max_frames
+        if len(saved_images) > 0:
+            last_frame = saved_images[-1]
+            frames_needed = max_frames - final_array.shape[0]
+            print(f"Duplicating last frame {frames_needed} time(s) to reach {max_frames} frames.")
+            for _ in range(frames_needed):
+                saved_images.append(last_frame)
+            final_array = np.array(saved_images)
     elif final_array.shape[0] > max_frames:
         print(
             f"Warning: {final_array.shape[0]} frames were processed. Truncating to {max_frames} frames."

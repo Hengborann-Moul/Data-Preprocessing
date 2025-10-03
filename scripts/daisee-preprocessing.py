@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     for obj in tqdm(objs, desc="Processing datasets: "):
         # Create object directory inside Processed
-        output_obj_dir = os.path.join(processed_dir, obj)
+        output_obj_dir = os.path.join(processed_dir, f"{obj}{args.fps}")
         if not os.path.exists(output_obj_dir):
             os.makedirs(output_obj_dir)
 
