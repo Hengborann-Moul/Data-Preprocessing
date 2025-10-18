@@ -32,16 +32,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     frame_count = args.frame
+    fps = int(frame_count/10)
     objs = ["Train", "Test", "Validation"]
 
     # Handle No Labels files, create No_Labels Folder if not exists
-    no_labels_dir = os.path.join(ROOT_DIR, "No_Labels")
+    no_labels_dir = os.path.join(ROOT_DIR, f"No_Labels{fps}")
     if not os.path.exists(no_labels_dir):
         os.makedirs(no_labels_dir)
 
     for obj in tqdm(objs, desc="Processing datasets: "):
         labels_df = get_labels_df(obj)
-        npy_files = get_npy_files(os.path.join(PROCESSED_DIR, f"{obj}"))
+        npy_files = get_npy_files(os.path.join(PROCESSED_DIR, f"{obj}{fps}"))
 
         # if len(labels_df) != len(npy_files):
         # print(
@@ -52,7 +53,7 @@ if __name__ == "__main__":
             labels_df["ClipID"].apply(lambda x: f"{os.path.splitext(x)[0]}.npy")
         )
         for npy_file in npy_files:
-            file_path = os.path.join(PROCESSED_DIR, f"{obj}", npy_file)
+            file_path = os.path.join(PROCESSED_DIR, f"{obj}{fps}", npy_file)
             should_move = False
             move_reason = ""
 

@@ -1,3 +1,4 @@
+import argparse
 import os
 
 import pandas as pd
@@ -38,9 +39,24 @@ def get_labels_from_csv(idx, obj) -> DataFrame:
 
 
 if __name__ == "__main__":
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Processing Label for Generated Frame: "
+    )
+    parser.add_argument(
+        "--frame",
+        type=int,
+        required=True,
+        help="Expected number of frames in each .npy file",
+    )
+    args = parser.parse_args()
+
+    frame_count = args.frame
+    fps = int(frame_count/10)
+
     objs = ["Train", "Test", "Validation"]
     for obj in tqdm(objs, desc="Checking preprocessed datasets: "):
-        processed_files = get_preprocessed_files(obj)
+        processed_files = get_preprocessed_files(f"{obj}{fps}")
         print(f"{obj} dataset has {len(processed_files)} preprocessed files.")
 
         # Create an Empty DataFrame to hold labels
