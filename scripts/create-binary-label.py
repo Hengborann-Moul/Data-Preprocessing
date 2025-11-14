@@ -48,6 +48,9 @@ def process_object_labels(obj):
     print(f"Processing {obj} labels from {labels_path}")
     df = pd.read_csv(labels_path)
 
+    # Clean column names by stripping whitespace
+    df.columns = df.columns.str.strip()
+
     print(f"Original {obj} dataset: {len(df)} samples")
     print("Original label distribution:")
     for col in ["Boredom", "Engagement", "Confusion", "Frustration"]:
