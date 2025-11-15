@@ -10,28 +10,29 @@ PROCESSED_DIR = os.path.join(ROOT_DIR, "Processed")
 
 def convert_to_binary_labels(df):
     """
-    Convert multi-class labels to binary labels based on the specified rules:
-    - Boredom: Replace class 2 & 3 to 1, keep 0 as 0
-    - Engagement: Replace class 1 & 2 to 0 and class 3 to 1, keep 0 as 0
-    - Confusion: Replace class 2 & 3 to 1, keep 0 as 0
-    - Frustration: Replace class 2 & 3 to 1, keep 0 as 0
+    Convert multi-class labels to binary labels using unified mapping:
+    {0,1} → 0 (low), {2,3} → 1 (high)
+    - Boredom: 0->0, 1->0, 2->1, 3->1
+    - Engagement: 0->0, 1->0, 2->1, 3->1
+    - Confusion: 0->0, 1->0, 2->1, 3->1
+    - Frustration: 0->0, 1->0, 2->1, 3->1
     """
     df_binary = df.copy()
 
-    # Boredom: 0->0, 1->1, 2->1, 3->1
-    df_binary["Boredom"] = df_binary["Boredom"].apply(lambda x: 1 if x >= 2 else x)
+    # Boredom: 0->0, 1->0, 2->1, 3->1
+    df_binary["Boredom"] = df_binary["Boredom"].apply(lambda x: 1 if x >= 2 else 0)
 
-    # Engagement: 0->0, 1->0, 2->0, 3->1
+    # Engagement: 0->0, 1->0, 2->1, 3->1
     df_binary["Engagement"] = df_binary["Engagement"].apply(
-        lambda x: 1 if x == 3 else 0
+        lambda x: 1 if x >= 2 else 0
     )
 
-    # Confusion: 0->0, 1->1, 2->1, 3->1
-    df_binary["Confusion"] = df_binary["Confusion"].apply(lambda x: 1 if x >= 2 else x)
+    # Confusion: 0->0, 1->0, 2->1, 3->1
+    df_binary["Confusion"] = df_binary["Confusion"].apply(lambda x: 1 if x >= 2 else 0)
 
-    # Frustration: 0->0, 1->1, 2->1, 3->1
+    # Frustration: 0->0, 1->0, 2->1, 3->1
     df_binary["Frustration"] = df_binary["Frustration"].apply(
-        lambda x: 1 if x >= 2 else x
+        lambda x: 1 if x >= 2 else 0
     )
 
     return df_binary
@@ -85,11 +86,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     print("Converting multi-class labels to binary labels...")
-    print("Conversion rules:")
-    print("- Boredom: 0->0, 1->1, 2->1, 3->1 (classes 2&3 become 1)")
-    print("- Engagement: 0->0, 1->0, 2->0, 3->1 (only class 3 becomes 1)")
-    print("- Confusion: 0->0, 1->1, 2->1, 3->1 (classes 2&3 become 1)")
-    print("- Frustration: 0->0, 1->1, 2->1, 3->1 (classes 2&3 become 1)")
+    print("Conversion rules: {0,1} → 0 (low), {2,3} → 1 (high)")
+    print("- Boredom: 0->0, 1->0, 2->1, 3->1")
+    print("- Engagement: 0->0, 1->0, 2->1, 3->1")
+    print("- Confusion: 0->0, 1->0, 2->1, 3->1")
+    print("- Frustration: 0->0, 1->0, 2->1, 3->1")
     print()
 
     for obj in tqdm(args.objects, desc="Processing objects"):
